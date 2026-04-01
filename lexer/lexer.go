@@ -28,27 +28,53 @@ func (l *Lexer) readChar() {
 
 }
 
+func (l *Lexer) peekChar() byte {
+	if l.readPostion >= len(l.input) {
+		return 0
+	} else {
+		return l.input[l.readPostion]
+	}
+}
+
 func (l *Lexer) NextToken() token.Token {
 	var tok token.Token
 	l.skipWhitespace()
 
 	switch l.ch {
 	case '=':
-		tok = NewToken(token.ASSIGN, l.ch)
+		tok = l.makeTwoCharToken(l.ch, '=', token.ASSIGN, token.EQ)
 	case ';':
-		tok = NewToken(token.SEMICOLON, l.ch)
+		tok = newToken(token.SEMICOLON, l.ch)
 	case '(':
-		tok = NewToken(token.LPAREN, l.ch)
+		tok = newToken(token.LPAREN, l.ch)
 	case ')':
-		tok = NewToken(token.RPAREN, l.ch)
+		tok = newToken(token.RPAREN, l.ch)
 	case '{':
-		tok = NewToken(token.LBRACE, l.ch)
+		tok = newToken(token.LBRACE, l.ch)
 	case '}':
-		tok = NewToken(token.RBRACE, l.ch)
+		tok = newToken(token.RBRACE, l.ch)
 	case '+':
-		tok = NewToken(token.PLUS, l.ch)
+		if l.peekChar() == '=' {
+			tok = l.makeTwoCharToken(l.ch, '=', token.PLUS, token.PLUS_ASSIGN)
+		} else if l.peekChar() == '+' {
+			tok = l.makeTwoCharToken(l.ch, '+', token.PLUS, token.INCREMENT)
+		} else {
+			tok = newToken(token.PLUS, l.ch)
+		}
+	case '-':
+		tok = newToken(token.MINUS, l.ch)
+	case '!':
+		tok = l.makeTwoCharToken(l.ch, '=', token.BANG, token.NOT_EQ)
+	case '/':
+		tok = newToken(token.SLASH, l.ch)
+	case '*':
+		tok = newToken(token.ASTERISK, l.ch)
+	case '<':
+		tok = newToken(token.LT, l.ch)
+	case '>':
+		tok = newToken(token.GT, l.ch)
 	case ',':
-		tok = NewToken(token.COMMA, l.ch)
+		tok = newToken(token.COMMA, l.ch)
 	case 0:
 		tok.Literal = ""
 		tok.Type = token.EOF
@@ -62,7 +88,7 @@ func (l *Lexer) NextToken() token.Token {
 			tok.Literal = l.readNumber()
 			return tok
 		} else {
-			tok = NewToken(token.ILLEGAL, l.ch)
+			tok = newToken(token.ILLEGAL, l.ch)
 		}
 
 	}
@@ -71,7 +97,7 @@ func (l *Lexer) NextToken() token.Token {
 
 }
 
-func NewToken(tokenType token.TokenType, ch byte) token.Token {
+func newToken(tokenType token.TokenType, ch byte) token.Token {
 	return token.Token{Type: tokenType, Literal: string(ch)}
 }
 
@@ -102,4 +128,13 @@ func (l *Lexer) skipWhitespace() {
 	for l.ch == ' ' || l.ch == '\t' || l.ch == '\n' || l.ch == '\r' {
 		l.readChar()
 	}
+}
+
+// two character tokens can be: ==, !=, <=, >=, +=, -=, *=, --, ++
+func (l *Lexer) makeTwoCharToken(firstChar, expectedSecond byte, singleCharType, twoCharType token.TokenType) token.Token {
+	if l.peekChar() == expectedSecond {
+		l.readChar()
+		return token.Token{Type: twoCharType, Literal: string(firstChar) + string(l.ch)}
+	}
+	return token.Token{Type: singleCharType, Literal: string(firstChar)}
 }
