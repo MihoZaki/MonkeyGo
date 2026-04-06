@@ -48,6 +48,7 @@ type Parser struct {
 func New(l *lexer.Lexer) *Parser {
 	p := &Parser{l: l,
 		errors: []string{}}
+
 	// REGISTER PREFIX FUNCTIONS
 	p.prefixParseFns = make(map[token.TokenType]prefixParseFn)
 	p.registerPrefix(token.IDENT, p.parseIdentifier)
