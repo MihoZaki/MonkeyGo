@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/MihoZaki/MonkeyGo/token"
+	"github.com/MihoZaki/MonkeyGo/parser"
 
 	"github.com/MihoZaki/MonkeyGo/lexer"
 )
@@ -23,11 +23,24 @@ func Start(in io.Reader, out io.Writer) {
 		}
 
 		lines := scanner.Text()
-		l := lexer.New(lines)
-		for tok := l.NextToken(); tok.Type != token.EOF; tok = l.NextToken() {
-			fmt.Fprintf(out, "%+v\n", tok)
-
+		if lines == "exit" {
+			break
 		}
-	}
+		l := lexer.New(lines)
+		p := parser.New(l)
+		program := p.ParseProgram()
+		if len(p.Errors()) != 0 {
+			printParserErrors(out, p.Errors())
+			continue
+		}
+		io.WriteString(out, program.String())
+		io.WriteString(out, "\n")
 
+	}
+}
+
+func printParserErrors(out io.Writer, errors []string) {
+	for _, msg := range errors {
+		io.WriteString(out, "\t"+msg+"\n")
+	}
 }
