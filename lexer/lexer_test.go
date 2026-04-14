@@ -28,6 +28,8 @@ func TestNextToken(t *testing.T) {
  		10 != 9; 
  		i++;
  		i+= 1;
+ 		"foobar"
+ 		"foo bar"
  		`
 
 	tests := []struct {
@@ -114,6 +116,8 @@ func TestNextToken(t *testing.T) {
 		{token.PLUS_ASSIGN, "+="},
 		{token.INT, "1"},
 		{token.SEMICOLON, ";"},
+		{token.STRING, "foobar"},
+		{token.STRING, "foo bar"},
 		{token.EOF, ""},
 	}
 
