@@ -467,6 +467,7 @@ func (p *Parser) currentPrecedence() int {
 	return LOWEST
 }
 
+// advances the parser if the next token matches the expected and return a bool
 func (p *Parser) expectPeek(t token.TokenType) bool {
 	if p.peekTokenIs(t) {
 		p.nextToken()
