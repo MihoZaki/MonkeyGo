@@ -1,6 +1,7 @@
 package evaluator
 
 import (
+	"fmt"
 	"slices"
 
 	"github.com/MihoZaki/MonkeyGo/object"
@@ -122,6 +123,14 @@ var builtins = map[string]*object.Builtin{
 					newElements = append(newElements, v)
 				}
 				return &object.Array{Elements: newElements}
+			}
+			return NULL
+		},
+	},
+	"puts": {
+		Fn: func(args ...object.Object) object.Object {
+			for _, arg := range args {
+				fmt.Println(arg.Inspect())
 			}
 			return NULL
 		},
