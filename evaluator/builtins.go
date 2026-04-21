@@ -44,7 +44,7 @@ var builtins = map[string]*object.Builtin{
 				return newError("wrong number of arguments. got=%d, want=1", len(args))
 			}
 			if args[0].Type() != object.ARRAY_OBJ {
-				return newError("argument to `first` must be ARRAY. got %s", args[0].Type())
+				return newError("argument to `last` must be ARRAY. got %s", args[0].Type())
 			}
 			arr := args[0].(*object.Array)
 			length := len(arr.Elements)
@@ -60,7 +60,7 @@ var builtins = map[string]*object.Builtin{
 				return newError("wrong number of arguments. got=%d, want=1", len(args))
 			}
 			if args[0].Type() != object.ARRAY_OBJ {
-				return newError("argument to `first` must be ARRAY. got %s", args[0].Type())
+				return newError("argument to `rest` must be ARRAY. got %s", args[0].Type())
 			}
 			arr := args[0].(*object.Array)
 			length := len(arr.Elements)
@@ -78,7 +78,7 @@ var builtins = map[string]*object.Builtin{
 				return newError("wrong number of arguments. got=%d, want=2", len(args))
 			}
 			if args[0].Type() != object.ARRAY_OBJ {
-				return newError("argument to `first` must be ARRAY. got %s", args[0].Type())
+				return newError("argument to `push` must be ARRAY. got %s", args[0].Type())
 			}
 			arr := args[0].(*object.Array)
 			length := len(arr.Elements)
@@ -94,7 +94,7 @@ var builtins = map[string]*object.Builtin{
 				return newError("wrong number of arguments. got=%d, want=1", len(args))
 			}
 			if args[0].Type() != object.ARRAY_OBJ {
-				return newError("argument to `first` must be ARRAY. got %s", args[0].Type())
+				return newError("argument to `pop` must be ARRAY. got %s", args[0].Type())
 			}
 			arr := args[0].(*object.Array)
 			length := len(arr.Elements)
@@ -113,7 +113,7 @@ var builtins = map[string]*object.Builtin{
 				return newError("wrong number of arguments. got=%d, want=1", len(args))
 			}
 			if args[0].Type() != object.ARRAY_OBJ {
-				return newError("argument to `first` must be ARRAY. got %s", args[0].Type())
+				return newError("argument to `reverse` must be ARRAY. got=%s", args[0].Type())
 			}
 			arr := args[0].(*object.Array)
 			length := len(arr.Elements)
