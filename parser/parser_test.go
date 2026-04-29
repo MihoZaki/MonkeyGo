@@ -2,6 +2,7 @@ package parser
 
 import (
 	"fmt"
+	"strconv"
 	"testing"
 
 	"github.com/MihoZaki/MonkeyGo/ast"
@@ -164,6 +165,34 @@ func TestIntegerLiteralExpression(t *testing.T) {
 	}
 }
 
+func TestFloatLiteralExpression(t *testing.T) {
+	input := "1.5;"
+	l := lexer.New(input)
+	p := New(l)
+	program := p.ParseProgram()
+	checkParserError(t, p)
+
+	if len(program.Statements) != 1 {
+		t.Fatalf("program has not enough statements. got=%d", len(program.Statements))
+	}
+
+	stmt, ok := program.Statements[0].(*ast.ExpressionStatement)
+	if !ok {
+		t.Fatalf("program.Statements[0] not *ast.ExpressionStatement. got=%T", stmt)
+	}
+
+	literal, ok := stmt.Expression.(*ast.FloatLiteral)
+	if !ok {
+		t.Fatalf("exp not *ast.FloatLiteral. got=%T", stmt.Expression)
+	}
+	if literal.Value != 1.5 {
+		t.Errorf("literal.Value not %d. got=%f", 5, literal.Value)
+	}
+	if literal.TokenLiteral() != "1.5" {
+		t.Errorf("literal.TokenLiteral not %s. got=%s", "5", literal.TokenLiteral())
+	}
+}
+
 func TestBooleanExpression(t *testing.T) {
 	booltests := []struct {
 		input     string
@@ -252,6 +281,24 @@ func testIntegerLiteral(t *testing.T, il ast.Expression, value int64) bool {
 	return true
 }
 
+func testFloatLiteral(t *testing.T, il ast.Expression, value float64) bool {
+	float, ok := il.(*ast.FloatLiteral)
+	if !ok {
+		t.Errorf("il not *ast.FloatLiteral. got=%T", il)
+		return false
+	}
+	if float.Value != value {
+		t.Errorf("float.Value not %f. got=%f", value, float.Value)
+		return false
+	}
+
+	if float.TokenLiteral() != strconv.FormatFloat(value, 'f', -1, 64) {
+		t.Errorf("float.TokenLiteral not %f. got=%s", value, float.TokenLiteral())
+		return false
+	}
+	return true
+}
+
 func TestParsingInfixExpressions(t *testing.T) {
 	infixTests := []struct {
 		input      string
@@ -267,6 +314,7 @@ func TestParsingInfixExpressions(t *testing.T) {
 		{"5 < 5;", 5, "<", 5},
 		{"5 == 5;", 5, "==", 5},
 		{"5 != 5;", 5, "!=", 5},
+		{"1.4 + 1.5;", 1.4, "+", 1.5},
 		{"true == true", true, "==", true},
 		{"true != false", true, "!=", false},
 		{"false == false", false, "==", false},
@@ -865,6 +913,8 @@ func testLiteralExpression(t *testing.T, exp ast.Expression, expected any) bool 
 		return testIntegerLiteral(t, exp, v)
 	case string:
 		return testIdentifier(t, exp, v)
+	case float64:
+		return testFloatLiteral(t, exp, v)
 	case bool:
 		return testBooleanLiteral(t, exp, v)
 	}
