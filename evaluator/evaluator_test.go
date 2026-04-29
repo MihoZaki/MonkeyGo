@@ -1,6 +1,7 @@
 package evaluator
 
 import (
+	"math"
 	"testing"
 
 	"github.com/MihoZaki/MonkeyGo/lexer"
@@ -33,6 +34,28 @@ func TestEvalIntegerExpression(t *testing.T) {
 	for _, tt := range tests {
 		evaluated := testEval(tt.input)
 		testIntegerObject(t, evaluated, tt.expected)
+	}
+
+}
+
+func TestEvalFloatExpression(t *testing.T) {
+	tests := []struct {
+		input    string
+		expected float64
+	}{
+		{"5.2", 5.2},
+		{"10.5", 10.5},
+		{"-5.1", -5.1},
+		{"-10.5", -10.5},
+		{"5.1 + 5.1 + 5.1 + 5.1 - 10.4", 10.0},
+		{"20.5 - 10", 10.5},
+		{"20 - 10.5", 9.5},
+		{"10.5 - 20", -9.5},
+	}
+
+	for _, tt := range tests {
+		evaluated := testEval(tt.input)
+		testFloatObject(t, evaluated, tt.expected)
 	}
 
 }
@@ -460,6 +483,19 @@ func testIntegerObject(t *testing.T, obj object.Object, expected int64) bool {
 	}
 	if result.Value != expected {
 		t.Errorf("object has wrong value. got=%d, want=%d", result.Value, expected)
+		return false
+	}
+	return true
+}
+
+func testFloatObject(t *testing.T, obj object.Object, expected float64) bool {
+	result, ok := obj.(*object.Float)
+	if !ok {
+		t.Errorf("object is not Float. got=%T (%+v)", obj, obj)
+		return false
+	}
+	if !(math.Abs(result.Value-expected) < 1e-9) {
+		t.Errorf("object has wrong value. got=%f, want=%f", result.Value, expected)
 		return false
 	}
 	return true
