@@ -2,7 +2,9 @@ package object
 
 import (
 	"fmt"
-	"hash/fnv"
+	"hash/maphash"
+	"math"
+	"strconv"
 	"strings"
 
 	"github.com/MihoZaki/MonkeyGo/ast"
@@ -24,6 +26,8 @@ const (
 	ARRAY_OBJ           = "ARRAY"
 	HASH_OBJ            = "HASH"
 )
+
+var seed = maphash.MakeSeed()
 
 type Object interface {
 	Type() ObjectType
@@ -102,7 +106,10 @@ func (s *String) Inspect() string {
 	return s.Value
 }
 func (s *String) HashKey() HashKey {
-	h := fnv.New64a()
+	// h := fnv.New64a()
+
+	var h maphash.Hash
+	h.SetSeed(seed)
 	h.Write([]byte(s.Value))
 
 	return HashKey{Type: s.Type(), Value: h.Sum64()}
