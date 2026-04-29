@@ -80,7 +80,8 @@ let shortened = pop(reversed);     // [10, 8, 6, 4]
 - [ ] Native loop constructs (`for`, `while`)
 - [ ] String manipulation builtins (`slice`, `contains`, `trim`)
 - [ ] Unicode identifier support (rune-based lexer)
-- [ ] Single-line comments
+- [x] Single-line comments
+- [x] Multi-lines comments
 - [ ] Postfix operators(i++, i--)
 - [ ] Index Expression for String literals
 - [ ] Float type support
