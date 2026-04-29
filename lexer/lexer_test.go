@@ -146,3 +146,53 @@ func TestNextToken(t *testing.T) {
 		}
 	}
 }
+
+func TestSingleLineComment(t *testing.T) {
+	tests := []struct {
+		name     string
+		input    string
+		expected []token.TokenType
+	}{
+		{
+			name:     "comment_before_code",
+			input:    "// this is a comment\nlet x = 5;",
+			expected: []token.TokenType{token.LET, token.IDENT, token.ASSIGN, token.INT, token.SEMICOLON, token.EOF},
+		},
+		{
+			name:     "inline_comment",
+			input:    "let x = 5;// inline comment\nlet y = 6;",
+			expected: []token.TokenType{token.LET, token.IDENT, token.ASSIGN, token.INT, token.SEMICOLON, token.LET, token.IDENT, token.ASSIGN, token.INT, token.SEMICOLON, token.EOF},
+		},
+		{
+			name:     "empty_comments",
+			input:    "//\n// empty comment\nlet z = 0;",
+			expected: []token.TokenType{token.LET, token.IDENT, token.ASSIGN, token.INT, token.SEMICOLON, token.EOF},
+		},
+		{
+			name:     "comment_at_eof_no_newline",
+			input:    "let z = 0; // comment without newline at EOF",
+			expected: []token.TokenType{token.LET, token.IDENT, token.ASSIGN, token.INT, token.SEMICOLON, token.EOF},
+		},
+		{
+			name:     "comment_with_special_chars",
+			input:    "// comment with symbols: !@#$%^&*()\nlet a = 1;",
+			expected: []token.TokenType{token.LET, token.IDENT, token.ASSIGN, token.INT, token.SEMICOLON, token.EOF},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			l := New(tt.input)
+			for i, exp := range tt.expected {
+				tok := l.NextToken()
+				if tok.Type != exp {
+					t.Errorf("step %d: expected token %s, got %s (literal: %q)",
+						i, exp, tok.Type, tok.Literal)
+				}
+			}
+			if final := l.NextToken(); final.Type != token.EOF {
+				t.Errorf("expected EOF after test, got %s", final.Type)
+			}
+		})
+	}
+}

@@ -72,6 +72,10 @@ func (l *Lexer) NextToken() token.Token {
 	case '!':
 		tok = l.makeTwoCharToken(l.ch, '=', token.BANG, token.NOT_EQ)
 	case '/':
+		if l.peekChar() == '/' {
+			l.skipComment()
+			return l.NextToken()
+		}
 		tok = newToken(token.SLASH, l.ch)
 	case '*':
 		tok = newToken(token.ASTERISK, l.ch)
@@ -135,6 +139,12 @@ func (l *Lexer) readString() string {
 		}
 	}
 	return l.input[position:l.position]
+}
+
+func (l *Lexer) skipComment() {
+	for l.ch != '\n' && l.ch != 0 {
+		l.readChar()
+	}
 }
 
 func isLetter(ch byte) bool {
