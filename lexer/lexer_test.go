@@ -242,3 +242,92 @@ func TestMultiLineComments(t *testing.T) {
 		})
 	}
 }
+
+func TestUnicodeIdentifiers(t *testing.T) {
+	tests := []struct {
+		name     string
+		input    string
+		expected []struct {
+			tokenType token.TokenType
+			literal   string
+		}
+	}{
+		{
+			name:  "chinese_identifier",
+			input: "let 你好 = 5;",
+			expected: []struct {
+				tokenType token.TokenType
+				literal   string
+			}{
+				{token.LET, "let"},
+				{token.IDENT, "你好"},
+				{token.ASSIGN, "="},
+				{token.INT, "5"},
+				{token.SEMICOLON, ";"},
+				{token.EOF, ""},
+			},
+		},
+		{
+			name:  "mixed_ascii_unicode",
+			input: "let user_名前 = 10; 名前;",
+			expected: []struct {
+				tokenType token.TokenType
+				literal   string
+			}{
+				{token.LET, "let"},
+				{token.IDENT, "user_名前"},
+				{token.ASSIGN, "="},
+				{token.INT, "10"},
+				{token.SEMICOLON, ";"},
+				{token.IDENT, "名前"},
+				{token.SEMICOLON, ";"},
+				{token.EOF, ""},
+			},
+		},
+		{
+			name:  "unicode_whitespace_handling",
+			input: "let　x　=　5;", // full-width spaces (U+3000)
+			expected: []struct {
+				tokenType token.TokenType
+				literal   string
+			}{
+				{token.LET, "let"},
+				{token.IDENT, "x"},
+				{token.ASSIGN, "="},
+				{token.INT, "5"},
+				{token.SEMICOLON, ";"},
+				{token.EOF, ""},
+			},
+		},
+		{
+			name:  "emoji_should_be_illegal_in_ident",
+			input: "let 🚀 = 1;",
+			expected: []struct {
+				tokenType token.TokenType
+				literal   string
+			}{
+				{token.LET, "let"},
+				{token.ILLEGAL, "🚀"}, // or skip? we'll decide semantics
+				{token.ASSIGN, "="},
+				{token.INT, "1"},
+				{token.SEMICOLON, ";"},
+				{token.EOF, ""},
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			l := New(tt.input)
+			for i, exp := range tt.expected {
+				tok := l.NextToken()
+				if tok.Type != exp.tokenType {
+					t.Errorf("step %d: expected type %s, got %s", i, exp.tokenType, tok.Type)
+				}
+				if tok.Literal != exp.literal {
+					t.Errorf("step %d: expected literal %q, got %q", i, exp.literal, tok.Literal)
+				}
+			}
+		})
+	}
+}

@@ -3,39 +3,46 @@ package lexer
 import (
 	"fmt"
 	"os"
+	"unicode"
+	"unicode/utf8"
 
 	"github.com/MihoZaki/MonkeyGo/token"
 )
 
 type Lexer struct {
-	input       string
-	position    int
-	readPostion int
-	ch          byte
+	input        []rune
+	position     int
+	readPosition int
+	ch           rune
 }
 
 func New(input string) *Lexer {
-	l := &Lexer{input: input}
+	// Pre-allocate rune slice for large inputs (avoids intermediate string allocation)
+	runes := make([]rune, 0, utf8.RuneCountInString(input))
+	for _, rune := range input {
+		runes = append(runes, rune)
+	}
+	l := &Lexer{input: runes}
 	l.readChar()
 	return l
 }
 
 func (l *Lexer) readChar() {
-	if l.readPostion >= len(l.input) {
+	if l.readPosition >= len(l.input) {
 		l.ch = 0
 	} else {
-		l.ch = l.input[l.readPostion]
+		l.ch = l.input[l.readPosition]
 	}
-	l.position = l.readPostion
-	l.readPostion++
+	l.position = l.readPosition
+	l.readPosition++
 
 }
 
-func (l *Lexer) peekChar() byte {
-	if l.readPostion >= len(l.input) {
+func (l *Lexer) peekChar() rune {
+	if l.readPosition >= len(l.input) {
 		return 0
 	} else {
-		return l.input[l.readPostion]
+		return l.input[l.readPosition]
 	}
 }
 
@@ -121,7 +128,7 @@ func (l *Lexer) NextToken() token.Token {
 
 }
 
-func newToken(tokenType token.TokenType, ch byte) token.Token {
+func newToken(tokenType token.TokenType, ch rune) token.Token {
 	return token.Token{Type: tokenType, Literal: string(ch)}
 }
 
@@ -130,7 +137,7 @@ func (l *Lexer) readIdentifier() string {
 	for isLetter(l.ch) {
 		l.readChar()
 	}
-	return l.input[position:l.position]
+	return string(l.input[position:l.position])
 }
 
 func (l *Lexer) readNumber() string {
@@ -138,7 +145,7 @@ func (l *Lexer) readNumber() string {
 	for isDigit(l.ch) {
 		l.readChar()
 	}
-	return l.input[position:l.position]
+	return string(l.input[position:l.position])
 }
 
 func (l *Lexer) readString() string {
@@ -149,7 +156,7 @@ func (l *Lexer) readString() string {
 			break
 		}
 	}
-	return l.input[position:l.position]
+	return string(l.input[position:l.position])
 }
 
 func (l *Lexer) skipComment() {
@@ -171,21 +178,21 @@ func (l *Lexer) skipMultiLineComment() bool {
 	return false
 }
 
-func isLetter(ch byte) bool {
-	return 'a' <= ch && ch <= 'z' || 'A' <= ch && ch <= 'Z' || ch == '_'
+func isLetter(ch rune) bool {
+	return unicode.IsLetter(ch) || ch == '_'
 }
-func isDigit(ch byte) bool {
-	return '0' <= ch && ch <= '9'
+func isDigit(ch rune) bool {
+	return unicode.IsDigit(ch)
 }
 
 func (l *Lexer) skipWhitespace() {
-	for l.ch == ' ' || l.ch == '\t' || l.ch == '\n' || l.ch == '\r' {
+	for unicode.IsSpace(l.ch) {
 		l.readChar()
 	}
 }
 
 // two character tokens can be: ==, !=, <=, >=, +=, -=, *=, --, ++
-func (l *Lexer) makeTwoCharToken(firstChar, expectedSecond byte, singleCharType, twoCharType token.TokenType) token.Token {
+func (l *Lexer) makeTwoCharToken(firstChar, expectedSecond rune, singleCharType, twoCharType token.TokenType) token.Token {
 	if l.peekChar() == expectedSecond {
 		l.readChar()
 		return token.Token{Type: twoCharType, Literal: string(firstChar) + string(l.ch)}
