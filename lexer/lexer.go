@@ -1,6 +1,9 @@
 package lexer
 
 import (
+	"fmt"
+	"os"
+
 	"github.com/MihoZaki/MonkeyGo/token"
 )
 
@@ -76,6 +79,14 @@ func (l *Lexer) NextToken() token.Token {
 			l.skipComment()
 			return l.NextToken()
 		}
+		if l.peekChar() == '*' {
+			l.readChar()
+			l.readChar()
+			if !l.skipMultiLineComment() {
+				fmt.Fprintf(os.Stderr, "warning: unclosed multi-line comment\n")
+			}
+			return l.NextToken()
+		}
 		tok = newToken(token.SLASH, l.ch)
 	case '*':
 		tok = newToken(token.ASTERISK, l.ch)
@@ -145,6 +156,19 @@ func (l *Lexer) skipComment() {
 	for l.ch != '\n' && l.ch != 0 {
 		l.readChar()
 	}
+}
+
+func (l *Lexer) skipMultiLineComment() bool {
+
+	for l.ch != 0 {
+		if l.ch == '*' && l.peekChar() == '/' {
+			l.readChar()
+			l.readChar()
+			return true
+		}
+		l.readChar()
+	}
+	return false
 }
 
 func isLetter(ch byte) bool {

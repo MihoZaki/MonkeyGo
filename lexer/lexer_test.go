@@ -16,7 +16,7 @@ func TestNextToken(t *testing.T) {
 		};
 
 		let result = add(five, ten);
- 		!-/*5;
+ 		!-/5*;
  		5 < 10 > 5;
  		if (5 < 10){
  			return true;
@@ -77,8 +77,8 @@ func TestNextToken(t *testing.T) {
 		{token.BANG, "!"},
 		{token.MINUS, "-"},
 		{token.SLASH, "/"},
-		{token.ASTERISK, "*"},
 		{token.INT, "5"},
+		{token.ASTERISK, "*"},
 		{token.SEMICOLON, ";"},
 		{token.INT, "5"},
 		{token.LT, "<"},
@@ -192,6 +192,52 @@ func TestSingleLineComment(t *testing.T) {
 			}
 			if final := l.NextToken(); final.Type != token.EOF {
 				t.Errorf("expected EOF after test, got %s", final.Type)
+			}
+		})
+	}
+}
+
+func TestMultiLineComments(t *testing.T) {
+	tests := []struct {
+		name     string
+		input    string
+		expected []token.TokenType
+	}{
+		{
+			"basic inline",
+			"/* comment */ let x = 5;",
+			[]token.TokenType{token.LET, token.IDENT, token.ASSIGN, token.INT, token.SEMICOLON, token.EOF},
+		},
+		{
+			"multi-line with newlines",
+			"/* line1\nline2\nline3 */ let y = 10;",
+			[]token.TokenType{token.LET, token.IDENT, token.ASSIGN, token.INT, token.SEMICOLON, token.EOF},
+		},
+		{
+			"empty comment",
+			"/**/ let z = 0;",
+			[]token.TokenType{token.LET, token.IDENT, token.ASSIGN, token.INT, token.SEMICOLON, token.EOF},
+		},
+		{
+			"comment before and after code",
+			"/* start */ let a = 1; /* end */",
+			[]token.TokenType{token.LET, token.IDENT, token.ASSIGN, token.INT, token.SEMICOLON, token.EOF},
+		},
+		{
+			"unclosed comment (should consume to EOF)",
+			"let x = 5; /* never closed",
+			[]token.TokenType{token.LET, token.IDENT, token.ASSIGN, token.INT, token.SEMICOLON, token.EOF},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			l := New(tt.input)
+			for _, exp := range tt.expected {
+				tok := l.NextToken()
+				if tok.Type != exp {
+					t.Errorf("expected %s, got %s", exp, tok.Type)
+				}
 			}
 		})
 	}
