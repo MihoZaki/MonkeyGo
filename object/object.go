@@ -13,6 +13,7 @@ type BuiltinFunction func(args ...Object) Object
 
 const (
 	INTEGER_OBJ         = "INTEGER"
+	FLOAT_OBJ           = "FLOAT"
 	BOOLEAN_OBJ         = "BOOLEAN"
 	STRING_OBJ          = "STRING"
 	NULL_OBJ            = "NULL"
@@ -48,6 +49,28 @@ func (i *Integer) Inspect() string {
 }
 func (i *Integer) HashKey() HashKey {
 	return HashKey{Type: i.Type(), Value: uint64(i.Value)}
+}
+
+type Float struct {
+	Value float64
+}
+
+func (f *Float) Type() ObjectType { return FLOAT_OBJ }
+func (f *Float) Inspect() string {
+	return strconv.FormatFloat(f.Value, 'g', -1, 64)
+}
+func (f *Float) HashKey() HashKey {
+	bits := math.Float64bits(f.Value)
+
+	if bits == 0x8000000000000000 {
+		bits = 0
+	}
+
+	if math.IsNaN(f.Value) {
+		bits = 0x7FF8000000000000
+	}
+
+	return HashKey{Type: f.Type(), Value: bits}
 }
 
 type Boolean struct {
