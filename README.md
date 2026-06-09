@@ -84,7 +84,7 @@ let shortened = pop(reversed);     // [10, 8, 6, 4]
 - [x] Multi-lines comments
 - [ ] Postfix operators(i++, i--)
 - [ ] Index Expression for String literals
-- [ ] Float type support
+- [x] Float type support
 
 ## 🧪 Testing
 
