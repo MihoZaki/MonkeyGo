@@ -4,9 +4,9 @@ import (
 	"math"
 	"testing"
 
-	"github.com/MihoZaki/MonkeyGo/lexer"
-	"github.com/MihoZaki/MonkeyGo/object"
-	"github.com/MihoZaki/MonkeyGo/parser"
+	"github.com/MihoZaki/chimp/lexer"
+	"github.com/MihoZaki/chimp/object"
+	"github.com/MihoZaki/chimp/parser"
 )
 
 func TestEvalIntegerExpression(t *testing.T) {
@@ -186,7 +186,7 @@ func TestErrorHandling(t *testing.T) {
 			`, "unknown operator: BOOLEAN + BOOLEAN"},
 		{"foobar", "identifier not found: foobar"},
 		{`"Hello" - "World"`, "unknown operator: STRING - STRING"},
-		{`{"name": "Monkey"}[fn(x){x}];`, "unusable as hash key: FUNCTION"},
+		{`{"name": "Chimp"}[fn(x){x}];`, "unusable as hash key: FUNCTION"},
 	}
 
 	for _, tt := range tests {

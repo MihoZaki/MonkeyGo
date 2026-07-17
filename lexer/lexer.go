@@ -6,7 +6,7 @@ import (
 	"unicode"
 	"unicode/utf8"
 
-	"github.com/MihoZaki/MonkeyGo/token"
+	"github.com/MihoZaki/chimp/token"
 )
 
 type Lexer struct {

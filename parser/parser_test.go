@@ -5,8 +5,8 @@ import (
 	"strconv"
 	"testing"
 
-	"github.com/MihoZaki/MonkeyGo/ast"
-	"github.com/MihoZaki/MonkeyGo/lexer"
+	"github.com/MihoZaki/chimp/ast"
+	"github.com/MihoZaki/chimp/lexer"
 )
 
 func TestLetStatements(t *testing.T) {

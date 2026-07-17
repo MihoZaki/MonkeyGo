@@ -5,7 +5,7 @@ import (
 	"os"
 	"os/user"
 
-	"github.com/MihoZaki/MonkeyGo/repl"
+	"github.com/MihoZaki/chimp/repl"
 )
 
 func main() {
@@ -14,7 +14,7 @@ func main() {
 		panic(err)
 	}
 
-	fmt.Printf("Hello %s! This The Monkey programming language!\n", user.Name)
+	fmt.Printf("Hello %s! This The Chimp programming language!\n", user.Name)
 	fmt.Printf("Feel free to type in commands\n")
 	repl.Start(os.Stdin, os.Stdout)
 }

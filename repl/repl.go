@@ -5,11 +5,11 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/MihoZaki/MonkeyGo/evaluator"
-	"github.com/MihoZaki/MonkeyGo/object"
-	"github.com/MihoZaki/MonkeyGo/parser"
+	"github.com/MihoZaki/chimp/evaluator"
+	"github.com/MihoZaki/chimp/object"
+	"github.com/MihoZaki/chimp/parser"
 
-	"github.com/MihoZaki/MonkeyGo/lexer"
+	"github.com/MihoZaki/chimp/lexer"
 )
 
 const PROMPT = ">> "

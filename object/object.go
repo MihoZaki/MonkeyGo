@@ -7,7 +7,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/MihoZaki/MonkeyGo/ast"
+	"github.com/MihoZaki/chimp/ast"
 )
 
 type ObjectType string

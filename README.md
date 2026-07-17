@@ -1,17 +1,17 @@
-# 🐒 Monkey Interpreter (Extended)
+# Chimp Interpreter
 
-> A handcrafted interpreter for the **Monkey** programming language, built from scratch in Go. Originally based on Thorsten Ball's *[Writing an Interpreter in Go](https://interpreterbook.com/)*, now actively extended with additional built-in functions, improved error handling, and plans for language-level expansions.
+> A handcrafted interpreter for the **Chimp** programming language, built from scratch in Go. Originally based on Thorsten Ball's *[Writing an Interpreter in Go](https://interpreterbook.com/)*, now actively extended with additional built-in functions, improved error handling, and plans for language-level expansions.
 
 [![Go Version](https://img.shields.io/badge/Go-1.26%2B-00ADD8?logo=go)](https://go.dev/)
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Tests](https://img.shields.io/badge/Tests-Passing-brightgreen)]()
 
-## 🚀 Quick Start
+## Quick Start
 
 ```bash
 # Clone & run
-git clone https://github.com/MihoZaki/MonkeyGo.git
-cd MonkeyGo
+git clone https://github.com/MihoZaki/chimp.git
+cd chimp
 go run main.go
 
 # Run the REPL
@@ -24,9 +24,9 @@ go run main.go
 [1, 2]
 ```
 
-## ✨ Features
+## Features
 
-### Core (Book Implementation)
+### Core
 - ✅ Lexical analysis with token streaming
 - ✅ Pratt parser with full precedence climbing
 - ✅ AST generation & structural equality testing
@@ -35,7 +35,7 @@ go run main.go
 - ✅ Arrays, hash maps, string literals, booleans & integers
 - ✅ Graceful error recovery & descriptive parser messages
 
-### 🛠️ Extended Builtins
+### Extended Builtins
 | Function | Description | Example |
 |----------|-------------|---------|
 | `pop(arr)` | Returns a new array with the last element removed | `pop([1,2,3]) → [1,2]` |
@@ -43,7 +43,7 @@ go run main.go
 | `len(x)` | Length of arrays/strings | `len("hello") → 5` |
 | `first(arr)`, `rest(arr)`, `push(arr, x)` | Functional list operations | `rest([1,2]) → [2]` |
 
-## 🏗️ Architecture
+## Architecture
 
 ```
 Source Code
@@ -60,9 +60,9 @@ Source Code
 - **Evaluator**: Direct AST traversal → resolves values in lexical environments
 - **REPL**: Read-Eval-Print-Loop with live feedback & error reporting
 
-## 📖 Language Syntax Examples
+## Language Syntax Examples
 
-```monkey
+```chimp
 // Variables & Functions
 let double = fn(x) { x * 2 };
 let numbers = [1, 2, 3, 4, 5];
@@ -75,18 +75,18 @@ let reversed = reverse(mapped);    // [10, 8, 6, 4, 2]
 let shortened = pop(reversed);     // [10, 8, 6, 4]
 ```
 
-## 🗺️ Roadmap
+## Roadmap
 
-- [ ] Native loop constructs (`for`, `while`)
-- [ ] String manipulation builtins (`slice`, `contains`, `trim`)
+- [x] Float type support
 - [x] Unicode identifier support (rune-based lexer)
 - [x] Single-line comments
 - [x] Multi-lines comments
+- [ ] Native loop constructs (`for`, `while`)
+- [ ] String manipulation builtins (`slice`, `contains`, `trim`)
 - [ ] Postfix operators(i++, i--)
 - [ ] Index Expression for String literals
-- [x] Float type support
 
-## 🧪 Testing
+## Testing
 
 ```bash
 # Run full test suite
@@ -96,7 +96,7 @@ go test ./...
 go test -cover ./...
 ```
 
-## 🤝 Contributing
+## Contributing
 
 Pull requests are welcome! If you're extending builtins, adding language features, or improving error recovery:
 1. Fork & create a feature branch
@@ -104,11 +104,11 @@ Pull requests are welcome! If you're extending builtins, adding language feature
 3. Update `README.md` & `ROADMAP.md` if adding public APIs
 4. Submit a PR with a clear description & test coverage
 
-## 📚 Acknowledgments
+## Acknowledgments
 
 - **[Thorsten Ball](https://thorstenball.com)** – Author of *Writing an Interpreter in Go*. This project started as a faithful implementation of his teachings and is now evolving beyond it.
 
-## 📄 License
+## License
 
 MIT © [MihoZaki]
 

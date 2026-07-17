@@ -3,7 +3,7 @@ package ast
 import (
 	"strings"
 
-	"github.com/MihoZaki/MonkeyGo/token"
+	"github.com/MihoZaki/chimp/token"
 )
 
 type Node interface {

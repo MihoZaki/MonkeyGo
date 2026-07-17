@@ -3,8 +3,8 @@ package evaluator
 import (
 	"fmt"
 
-	"github.com/MihoZaki/MonkeyGo/ast"
-	"github.com/MihoZaki/MonkeyGo/object"
+	"github.com/MihoZaki/chimp/ast"
+	"github.com/MihoZaki/chimp/object"
 )
 
 var (

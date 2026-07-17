@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"slices"
 
-	"github.com/MihoZaki/MonkeyGo/object"
+	"github.com/MihoZaki/chimp/object"
 )
 
 var builtins = map[string]*object.Builtin{
